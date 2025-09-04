@@ -105,7 +105,7 @@ public class BancoApp {
     }
 
     private static void retirarPropio() {
-        System.out.print("Ingrese el monto a retirar: ");
+        System.out.print("Ingrese el monto que desea retirar: ");
         double monto = leerMonto();
         if (cuentaActual.retirar(monto)) {
             System.out.println("Retiro exitoso. Nuevo saldo: " + cuentaActual.getSaldo());
