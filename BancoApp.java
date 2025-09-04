@@ -34,6 +34,13 @@ public class BancoApp {
         }
     }
 
+    private static void iniciarSesion() {
+        System.out.print("Ingrese su número de cuenta: ");
+        cuentaActual = scanner.nextLine();
+        cuentas.putIfAbsent(cuentaActual, 0.0);
+        System.out.println("Sesión iniciada en la cuenta " + cuentaActual);
+    }
+
     private static void mostrarMenu() {
         System.out.println("\nSeleccione una opción:");
         System.out.println("1. Depositar a mi cuenta");
