@@ -54,6 +54,13 @@ public class BancoApp {
 
     private static void depositarPropio() {
         System.out.print("Ingrese el monto a depositar: ");
+        double monto = leerMonto();
+        if (monto <= 0) {
+            System.out.println("Monto inválido. Debe ser mayor a cero.");
+            return;
+        }
+        cuentas.put(cuentaActual, cuentas.get(cuentaActual) + monto);
+        System.out.println("Depósito exitoso. Nuevo saldo: " + cuentas.get(cuentaActual));
     }
 
     private static void retirarPropio() {
