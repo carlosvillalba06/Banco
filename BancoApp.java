@@ -2,13 +2,44 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+class Cuenta {
+    private String numero;
+    private double saldo;
+
+    public Cuenta(String numero) {
+        this.numero = numero;
+        this.saldo = 0.0;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public boolean depositar(double monto) {
+        if (monto <= 0) return false;
+        saldo += monto;
+        return true;
+    }
+
+    public boolean retirar(double monto) {
+        if (monto <= 0 || monto > saldo) return false;
+        saldo -= monto;
+        return true;
+    }
+}
+
 public class BancoApp {
-    private static Map<String, Double> cuentas = new HashMap<>();
+    private static Map<String, Cuenta> cuentas = new HashMap<>();
     private static Scanner scanner = new Scanner(System.in);
-    private static String cuentaActual;
+    private static Cuenta cuentaActual;
 
     public static void main(String[] args) {
         System.out.println("Bienvenido al sistema bancario");
+        iniciarSesion();
         while (true) {
             mostrarMenu();
             int opcion = leerOpcion();
@@ -36,9 +67,13 @@ public class BancoApp {
 
     private static void iniciarSesion() {
         System.out.print("Ingrese su número de cuenta: ");
-        cuentaActual = scanner.nextLine();
-        cuentas.putIfAbsent(cuentaActual, 0.0);
-        System.out.println("Sesión iniciada en la cuenta " + cuentaActual);
+        String numero = scanner.nextLine();
+        cuentaActual = cuentas.get(numero);
+        if (cuentaActual == null) {
+            cuentaActual = new Cuenta(numero);
+            cuentas.put(numero, cuentaActual);
+        }
+        System.out.println("Sesión iniciada en la cuenta " + cuentaActual.getNumero());
     }
 
     private static void mostrarMenu() {
@@ -62,46 +97,42 @@ public class BancoApp {
     private static void depositarPropio() {
         System.out.print("Ingrese el monto a depositar: ");
         double monto = leerMonto();
-        if (monto <= 0) {
+        if (cuentaActual.depositar(monto)) {
+            System.out.println("Depósito exitoso. Nuevo saldo: " + cuentaActual.getSaldo());
+        } else {
             System.out.println("Monto inválido. Debe ser mayor a cero.");
-            return;
         }
-        cuentas.put(cuentaActual, cuentas.get(cuentaActual) + monto);
-        System.out.println("Depósito exitoso. Nuevo saldo: " + cuentas.get(cuentaActual));
     }
 
     private static void retirarPropio() {
         System.out.print("Ingrese el monto a retirar: ");
         double monto = leerMonto();
-        double saldo = cuentas.get(cuentaActual);
-        if(monto <= 0){
-            System.out.println("Monto invalido. Debe ser mayor a 0 ");
+        if (cuentaActual.retirar(monto)) {
+            System.out.println("Retiro exitoso. Nuevo saldo: " + cuentaActual.getSaldo());
+        } else {
+            System.out.println("Monto inválido o fondos insuficientes. Saldo actual: " + cuentaActual.getSaldo());
         }
-
-        if(monto > saldo){
-            System.out.println("fondos insuficientes. Saldo actul: " + saldo);
-        }
-
-        cuentas.put(cuentaActual,saldo - monto);
-        System.out.println("Retiro exitoso. Nuevo saldo: " + cuentas.get(cuentaActual));
     }
 
     private static void depositarOtraCuenta() {
         System.out.print("Ingrese el número de cuenta destino: ");
-        String cuentaDestino = scanner.nextLine();
-        System.out.println("Ingrese el monto a depositar: ");
-        double monto = leerMonto();
-        if (monto <= 0) {
-            System.out.println("Monto inválido. Debe ser mayor a cero.");
-            return;
+        String destino = scanner.nextLine();
+        Cuenta cuentaDestino = cuentas.get(destino);
+        if (cuentaDestino == null) {
+            cuentaDestino = new Cuenta(destino);
+            cuentas.put(destino, cuentaDestino);
         }
-        cuentas.putIfAbsent(cuentaActual, 0.0);
-        cuentas.put(cuentaDestino, cuentas.get(cuentaDestino) + monto);
-        System.out.println("Deposito exitoso a la cuenta " + cuentaDestino + ". Nuevo saldo: " + cuentas.get(cuentaDestino));
+        System.out.print("Ingrese el monto a depositar: ");
+        double monto = leerMonto();
+        if (cuentaDestino.depositar(monto)) {
+            System.out.println("Depósito exitoso a la cuenta " + destino + ". Nuevo saldo: " + cuentaDestino.getSaldo());
+        } else {
+            System.out.println("Monto inválido. Debe ser mayor a cero.");
+        }
     }
 
     private static void mostrarSaldo() {
-        System.out.println("Saldo actual: " + cuentas.get(cuentaActual));
+        System.out.println("Saldo actual: " + cuentaActual.getSaldo());
     }
 
     private static double leerMonto() {
