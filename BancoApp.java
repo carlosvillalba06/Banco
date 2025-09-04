@@ -81,6 +81,16 @@ public class BancoApp {
 
     private static void depositarOtraCuenta() {
         System.out.print("Ingrese el número de cuenta destino: ");
+        String cuentaDestino = scanner.nextLine();
+        System.out.println("Ingrese el monto a depositar: ");
+        double monto = leerMonto();
+        if (monto <= 0) {
+            System.out.println("Monto inválido. Debe ser mayor a cero.");
+            return;
+        }
+        cuentas.putIfAbsent(cuentaActual, 0.0);
+        cuentas.put(cuentaDestino, cuentas.get(cuentaDestino) + monto);
+        System.out.println("Deposito exitoso a la cuenta " + cuentaDestino + ". Nuevo saldo: " + cuentas.get(cuentaDestino));
     }
 
     private static void mostrarSaldo() {
