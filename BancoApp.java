@@ -65,6 +65,18 @@ public class BancoApp {
 
     private static void retirarPropio() {
         System.out.print("Ingrese el monto a retirar: ");
+        double monto = leerMonto();
+        double saldo = cuentas.get(cuentaActual);
+        if(monto <= 0){
+            System.out.println("Monto invalido. Debe ser mayor a 0 ");
+        }
+
+        if(monto > saldo){
+            System.out.println("fondos insuficientes. Saldo actul: " + saldo);
+        }
+
+        cuentas.put(cuentaActual,saldo - monto);
+        System.out.println("Retiro exitoso. Nuevo saldo: " + cuentas.get(cuentaActual));
     }
 
     private static void depositarOtraCuenta() {
